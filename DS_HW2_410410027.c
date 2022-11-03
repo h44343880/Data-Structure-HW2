@@ -1,55 +1,48 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
+
+typedef struct User{
+    int len_coordinate, wid_coordinate;
+    int accept; // 紀錄該user的request是否為accepted
+    int choices[5]; //紀錄有哪些種類的block可以選
+}User;
+
+int check(int num){// 判斷方塊是何種形狀
+    int cnt = 0;
+    while(num != 1){
+        num /= 2;
+        cnt++;
+    }
+    return cnt;
+}
 
 int main(){
-    int length, width, user, cnt = 0;
-    scanf("%d %d %d", &length, &width, &user);
+    int length, width, user_num, cnt = 0;
+    scanf("%d %d %d\n", &length, &width, &user_num);
 
-    int user_id, block_len, block_wid, current = 0;
-    char * input = (char*)calloc(50, sizeof(char));
-    char * word = (char*)malloc(sizeof(char) * 5);
-    gets(input);//將scanf略過的換行符號讀入
-    char ** block_type = (char**)calloc(user, sizeof(char*));
-    for(int i = 0; i < user; i++){
-        block_type[i] = (char*)calloc(5, sizeof(char));
-    }
-    int * accept = (int*)calloc(user, sizeof(int));
-    int * coordinate = (int*)malloc(sizeof(int) * user);
-    for(int i = 0; i < user; i++){
-        gets(input);
-        // printf("%s\n", input);
-        word = strtok(input, " ");
-        word = strtok(NULL, " ");
-        // printf("%d: %s\n", i, word);
-        strcpy(block_type[i], word);
-        if(strcmp(word, "1x16") == 0){
-            block_len = 1;
-            block_wid = 16;
-        }else if(strcmp(word, "2x8") == 0){
-            block_len = 2;
-            block_wid = 8;
-        }else if(strcmp(word, "4x4") == 0){
-            block_len = 4;
-            block_wid = 4;
-        }else if(strcmp(word, "8x2") == 0){
-            block_len = 8;
-            block_wid = 2;
-        }else if(strcmp(word, "16x1") == 0){
-            block_len = 16;
-            block_wid = 1;
+    User * user_arr = (User*)malloc(sizeof(User) * user_num);
+    int type_cnt[5] = {0};
+    int user_id, block_id, block_len, block_wid, chr;
+    for(int i = 0; i < user_num; i++){
+        user_arr[i].accept = 0;
+        for(int j = 0; j < 5; j++){
+            user_arr[i].choices[j] = 0;
         }
-        if(block_len <= length && block_wid + current <= width){
-            accept[i] = 1;
-            coordinate[i] = current;
-            current += block_wid;
-            cnt++;
+        scanf("%d ", &user_id);
+        while(1){
+            scanf("%dx%d%c", &block_len, &block_wid, &chr);
+            block_id = check(block_len);
+            type_cnt[block_id]++;
+            user_arr[i].choices[block_id] = 1;
+            if(chr == '\n')
+                break;
         }
+        // for(int j = 0; j < 5; j++){
+        //     printf("%d ",user_arr[i].choices[j]);
+        // }
+        // printf("\n");
+        
     }
-    printf("%d\n", cnt);
-    for(int i = 0; i < user; i++){
-        if(accept[i]){
-            printf("%d %s 0 %d\n", i, block_type[i], coordinate[i]);
-        }
-    }
+    
+
 }
